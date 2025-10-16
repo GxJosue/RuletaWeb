@@ -1,0 +1,83 @@
+/* --- Estilos base --- */
+body {
+  background: radial-gradient(circle at center, #111, #000);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+}
+
+.ruleta-container {
+  position: relative;
+  text-align: center;
+  width: 90%;
+  max-width: 500px;
+}
+
+/* --- Canvas --- */
+canvas {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+  box-shadow: 0 0 30px rgba(255,255,255,0.3);
+}
+
+/* --- Flecha --- */
+.flecha {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-top: 30px solid #ffcc00;
+}
+
+/* --- Botón --- */
+#boton-girar {
+  margin-top: 20px;
+  padding: 12px 25px;
+  background: linear-gradient(45deg, #ff7f50, #ffcc00);
+  border: none;
+  border-radius: 10px;
+  color: #000;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#boton-girar:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+}
+
+/* --- Resultado --- */
+#resultado {
+  margin-top: 15px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* --- Responsividad --- */
+@media (max-width: 600px) {
+  #boton-girar {
+    font-size: 16px;
+    padding: 10px 20px;
+  }
+
+  #resultado {
+    font-size: 18px;
+  }
+
+  .flecha {
+    border-left-width: 12px;
+    border-right-width: 12px;
+    border-bottom-width: 24px;
+  }
+}
