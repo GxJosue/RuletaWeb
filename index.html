@@ -13,10 +13,14 @@
     <canvas id="ruleta"></canvas>
     <button id="boton-girar">Girar</button>
     <div id="resultado"></div>
+    <div id="giros-restantes" class="giros-info"></div>
   </div>
 
   <script src="script.js"></script>
 <script type="module">
+  const girosInfo = document.getElementById("giros-restantes");
+  const botonGirar = document.getElementById("boton-girar");
+
   // === Importar Firebase (v12.4.0) ===
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
   import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
@@ -47,7 +51,6 @@
   }
 
   const userRef = doc(db, "usuarios", nombre);
-  const botonGirar = document.getElementById("boton-girar");
   let girosRestantes = 0;
 
   // === Verificar si existe el usuario o crearlo ===
@@ -57,22 +60,21 @@
 
       if (!userSnap.exists()) {
         await setDoc(userRef, { nombre, giros_restantes: 3 });
-        console.log("✅ Usuario nuevo guardado:", nombre);
-        alert(`¡Bienvenido, ${nombre}! Tienes 3 giros disponibles 🎉`);
         girosRestantes = 3;
+        girosInfo.textContent = `¡Bienvenido, ${nombre}! Tienes ${girosRestantes} giros disponibles 🎉`;
       } else {
         const data = userSnap.data();
-        console.log("👤 Usuario encontrado:", data);
         girosRestantes = data.giros_restantes;
         if (girosRestantes > 0) {
-          alert(`Hola de nuevo, ${nombre}. Te quedan ${girosRestantes} giros.`);
+          girosInfo.textContent = `Hola de nuevo, ${nombre}. Te quedan ${girosRestantes} giros.`;
         } else {
-          alert(`Hola de nuevo, ${nombre}. Ya no tienes giros disponibles 😢`);
+          girosInfo.textContent = `Hola de nuevo, ${nombre}. Ya no tienes giros disponibles 😢`;
           bloquearBoton();
         }
       }
     } catch (error) {
       console.error("❌ Error al acceder a Firestore:", error);
+      girosInfo.textContent = "Error al cargar tus datos. Intenta más tarde.";
     }
   }
 
@@ -87,7 +89,7 @@
   // === Función para restar giros ===
   async function usarGiro() {
     if (girosRestantes <= 0) {
-      alert("Ya no tienes giros disponibles 😢");
+      girosInfo.textContent = "Ya no tienes giros disponibles 😢";
       bloquearBoton();
       return;
     }
@@ -109,10 +111,10 @@
     }
 
     if (girosRestantes === 0) {
-      alert("¡Has usado todos tus giros!");
+      girosInfo.textContent = "¡Has usado todos tus giros!";
       bloquearBoton();
     } else {
-      alert(`Te quedan ${girosRestantes} giros.`);
+      girosInfo.textContent = `Te quedan ${girosRestantes} giros.`;
     }
   }
 
