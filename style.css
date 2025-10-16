@@ -13,8 +13,8 @@ body {
 .ruleta-container {
   position: relative;
   text-align: center;
-  width: 90%;
-  max-width: 500px;
+  width: 100%;
+  max-width: 400px;
 }
 
 /* --- Canvas --- */

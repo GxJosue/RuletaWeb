@@ -9,12 +9,18 @@ const sectorRad = (2 * Math.PI) / numSegmentos;
 let girando = false;
 
 // Dibuja la ruleta en base al tamaño actual del canvas
-function dibujarRuleta() {
-  const radio = Math.min(canvas.width, canvas.height) / 2;
-  const margen = radio * 0.05; // margen interno para que no se salga
+function dibujarRuleta(anguloDeg = 0) {
+  const size = canvas.clientWidth;
+  const radio = size / 2;
+  const margen = radio * 0.05;
   const radioAjustado = radio - margen;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.save();
+  ctx.translate(radio, radio);
+  ctx.rotate((anguloDeg * Math.PI) / 180);
+  ctx.translate(-radio, -radio);
 
   for (let i = 0; i < numSegmentos; i++) {
     const angInicio = i * sectorRad;
@@ -26,23 +32,23 @@ function dibujarRuleta() {
     ctx.closePath();
     ctx.fill();
 
-    // Texto centrado proporcional
     ctx.save();
     ctx.translate(radio, radio);
     ctx.rotate(angInicio + sectorRad / 2);
     ctx.fillStyle = "#fff";
-    ctx.font = `${radio * 0.08}px Poppins`;
+    ctx.font = `${size * 0.04}px Poppins`;
     ctx.textAlign = "center";
     ctx.fillText(premios[i], radioAjustado * 0.6, 0);
     ctx.restore();
   }
 
-  // Opcional: borde exterior
   ctx.beginPath();
   ctx.arc(radio, radio, radioAjustado, 0, 2 * Math.PI);
   ctx.strokeStyle = "#fff";
   ctx.lineWidth = 4;
   ctx.stroke();
+
+  ctx.restore();
 }
 
 // Ajusta canvas al ancho del contenedor (responsivo)
@@ -51,12 +57,18 @@ function ajustarCanvas() {
   const size = container.offsetWidth;
   const ratio = window.devicePixelRatio || 1;
 
+  // Establece el tamaño interno del canvas (para alta resolución)
   canvas.width = size * ratio;
   canvas.height = size * ratio;
+
+  // Establece el tamaño visual del canvas (CSS)
   canvas.style.width = size + "px";
   canvas.style.height = size + "px";
 
-  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  // Escala el contexto para que todo se dibuje correctamente
+  ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+  ctx.scale(ratio, ratio);           // Aplica escala
+
   dibujarRuleta();
 }
 
@@ -83,34 +95,25 @@ boton.addEventListener("click", () => {
   const duracion = 4200;
   const inicio = performance.now();
 
-  function animar(tiempo) {
-    const progreso = Math.min((tiempo - inicio) / duracion, 1);
-    const easing = 1 - Math.pow(1 - progreso, 3);
-    const angulo = anguloFinal * easing;
+function animar(tiempo) {
+  const progreso = Math.min((tiempo - inicio) / duracion, 1);
+  const easing = 1 - Math.pow(1 - progreso, 3);
+  const angulo = anguloFinal * easing;
 
-    ctx.save();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  dibujarRuleta(angulo); // ← ahora la rotación se maneja dentro de esta función
+  ctx.restore();
 
-    const ratio = window.devicePixelRatio || 1;
-    const cx = canvas.width / 2;
-    const cy = canvas.height / 2;
-
-    ctx.translate(cx, cy);
-    ctx.rotate((angulo * Math.PI) / 180);
-    ctx.translate(-cx, -cy);
-
-    dibujarRuleta();
-    ctx.restore();
-
-    if (progreso < 1) {
-      requestAnimationFrame(animar);
-    } else {
-      girando = false;
-      const anguloGanador = anguloFinal % 360;
-      const indice = calcularIndiceGanador(anguloGanador);
-      resultado.textContent = `Ganaste: ${premios[indice]} `;
-    }
+  if (progreso < 1) {
+    requestAnimationFrame(animar);
+  } else {
+    girando = false;
+    const anguloGanador = anguloFinal % 360;
+    const indice = calcularIndiceGanador(anguloGanador);
+    resultado.textContent = `Ganaste: ${premios[indice]} `;
   }
+}
 
   requestAnimationFrame(animar);
 });
