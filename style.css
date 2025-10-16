@@ -41,6 +41,7 @@ canvas {
 /* --- Botón --- */
 #boton-girar {
   margin-top: 20px;
+  margin-bottom: 30px;
   padding: 12px 25px;
   background: linear-gradient(45deg, #ff7f50, #ffcc00);
   border: none;
@@ -91,6 +92,20 @@ canvas {
   font-size: 1.5rem;
   color: #ffffff;
   text-align: center;
+}
+
+.resultado-premio {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #e63946;
+  text-align: center;
+  margin-top: 50px;
+  animation: resaltarGanador 1s ease-in-out infinite alternate;
+}
+
+@keyframes resaltarGanador {
+  from { transform: scale(1); color: #e63946; }
+  to { transform: scale(1.2); color: #ffd700; }
 }
 
   .flecha {

@@ -3,13 +3,20 @@ const ctx = canvas.getContext("2d");
 const boton = document.getElementById("boton-girar");
 const resultado = document.getElementById("resultado");
 
-const premios = ["Premio 1", "Premio 2", "Premio 3", "Premio 4", "Premio 5", "Premio 6"];
+const premios = [
+  { nombre: "Premio 1", color: "#e63946" },
+  { nombre: "Premio 2", color: "#457b9d" },
+  { nombre: "Premio 3", color: "#f4a261" },
+  { nombre: "Premio 4", color: "#2a9d8f" },
+  { nombre: "Premio 5", color: "#264653" }
+];
+
 const numSegmentos = premios.length;
 const sectorRad = (2 * Math.PI) / numSegmentos;
 let girando = false;
 
 // Dibuja la ruleta en base al tamaño actual del canvas
-function dibujarRuleta(anguloDeg = 0) {
+function dibujarRuleta(anguloDeg = 0, resaltar = -1) {
   const size = canvas.clientWidth;
   const radio = size / 2;
   const margen = radio * 0.05;
@@ -22,25 +29,39 @@ function dibujarRuleta(anguloDeg = 0) {
   ctx.rotate((anguloDeg * Math.PI) / 180);
   ctx.translate(-radio, -radio);
 
-  for (let i = 0; i < numSegmentos; i++) {
-    const angInicio = i * sectorRad;
+for (let i = 0; i < numSegmentos; i++) {
+  const angInicio = i * sectorRad;
 
-    ctx.beginPath();
-    ctx.fillStyle = i % 2 ? "#e63946" : "#457b9d";
-    ctx.moveTo(radio, radio);
-    ctx.arc(radio, radio, radioAjustado, angInicio, angInicio + sectorRad);
-    ctx.closePath();
-    ctx.fill();
+  ctx.beginPath();
+  ctx.fillStyle = premios[i].color;
 
-    ctx.save();
-    ctx.translate(radio, radio);
-    ctx.rotate(angInicio + sectorRad / 2);
-    ctx.fillStyle = "#fff";
-    ctx.font = `${size * 0.04}px Poppins`;
-    ctx.textAlign = "center";
-    ctx.fillText(premios[i], radioAjustado * 0.6, 0);
-    ctx.restore();
-  }
+  // Si es el segmento ganador, ilumínalo
+if (i === resaltar) {
+  ctx.shadowColor = "#ffff00"; // amarillo brillante
+  ctx.shadowBlur = 60;         // más intenso
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = "#fff";
+  ctx.stroke();                // borde blanco adicional
+}
+
+  ctx.moveTo(radio, radio);
+  ctx.arc(radio, radio, radioAjustado, angInicio, angInicio + sectorRad);
+  ctx.closePath();
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Texto o imagen
+  ctx.save();
+  ctx.translate(radio, radio);
+  ctx.rotate(angInicio + sectorRad / 2);
+  ctx.fillStyle = "#fff";
+  ctx.font = `${size * 0.04}px Poppins`;
+  ctx.textAlign = "center";
+  ctx.fillText(premios[i].nombre, radioAjustado * 0.6, 0);
+  ctx.restore();
+  
+}
+
 
   ctx.beginPath();
   ctx.arc(radio, radio, radioAjustado, 0, 2 * Math.PI);
@@ -105,15 +126,23 @@ function animar(tiempo) {
   dibujarRuleta(angulo); // ← ahora la rotación se maneja dentro de esta función
   ctx.restore();
 
-  if (progreso < 1) {
-    requestAnimationFrame(animar);
-  } else {
-    girando = false;
-    const anguloGanador = anguloFinal % 360;
-    const indice = calcularIndiceGanador(anguloGanador);
-    resultado.textContent = `Ganaste: ${premios[indice]} `;
-  }
-}
+if (progreso < 1) {
+  requestAnimationFrame(animar);
+} else {
+  girando = false;
+  const anguloGanador = anguloFinal % 360;
+  const indice = calcularIndiceGanador(anguloGanador);
 
+  resultado.textContent = `Ganaste: ${premios[indice].nombre}`;
+  dibujarRuleta(anguloGanador, indice); // ← resalta el segmento ganador
+  confetti({
+    particleCount: 150,
+    spread: 70,
+    origin: { y: 0.6 },
+    colors: ['#e63946', '#f4a261', '#2a9d8f', '#457b9d', '#ffd700']
+  });
+
+}
+}
   requestAnimationFrame(animar);
 });

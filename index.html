@@ -13,7 +13,7 @@
     <div class="flecha"></div>
     <canvas id="ruleta"></canvas>
     <button id="boton-girar">Girar</button>
-    <div id="resultado"></div>
+    <div id="resultado" class="resultado-premio"></div>
     <div id="giros-restantes" class="giros-info"></div>
   </div>
 
@@ -67,9 +67,9 @@
         const data = userSnap.data();
         girosRestantes = data.giros_restantes;
         if (girosRestantes > 0) {
-          girosInfo.textContent = `Hola de nuevo, ${nombre}. Te quedan ${girosRestantes} giros.`;
+          girosInfo.textContent = `Hola, ${nombre}. Te quedan ${girosRestantes} giros.`;
         } else {
-          girosInfo.textContent = `Hola de nuevo, ${nombre}. Ya no tienes giros disponibles 😢`;
+          girosInfo.textContent = `Hola, ${nombre}. Ya no tienes giros disponibles 😢`;
           bloquearBoton();
         }
       }
@@ -125,6 +125,6 @@
   // === Ejecutar la verificación al cargar ===
   await verificarUsuario();
 </script>
-
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </body>
 </html>
