@@ -60,11 +60,11 @@ for (let i = 0; i < numSegmentos; i++) {
 
   // Si es el segmento ganador, ilumínalo
 if (i === resaltar) {
-  ctx.shadowColor = "#ffff00"; // amarillo brillante
-  ctx.shadowBlur = 60;         // más intenso
+  ctx.shadowColor = "#ffff00"; 
+  ctx.shadowBlur = 60;         
   ctx.lineWidth = 6;
   ctx.strokeStyle = "#fff";
-  ctx.stroke();                // borde blanco adicional
+  ctx.stroke();                
 }
 
   ctx.moveTo(radio, radio);
@@ -92,8 +92,8 @@ const img = imagenes[i];
 if (img && img.complete) {
   ctx.drawImage(
     img,
-    radioAjustado * 0.6 -imgSize / 2 + 5, // centrado horizontal
-    -imgSize - 5,                    // posición vertical arriba
+    radioAjustado * 0.6 -imgSize / 2 + 5, 
+    -imgSize - 5,                    
     imgSize,
     imgSize
   );
@@ -103,7 +103,7 @@ if (img && img.complete) {
 ctx.fillStyle = "#fff";
 ctx.font = `${size * 0.030}px Orbitron`;
 ctx.textAlign = "center";
-ctx.fillText(premios[i].nombre, radioAjustado * 0.6, 10); // debajo de la imagen
+ctx.fillText(premios[i].nombre, radioAjustado * 0.6, 10); 
 
 ctx.restore();
   
@@ -116,7 +116,7 @@ ctx.restore();
   ctx.stroke();
 
   if (logoCentral.complete) {
-  const logoSize = canvas.clientWidth * 0.35; // ajusta el tamaño según tu diseño
+  const logoSize = canvas.clientWidth * 0.35; 
   ctx.drawImage(
     logoCentral,
     radio - logoSize / 2,
@@ -126,7 +126,7 @@ ctx.restore();
   );
 } else {
   logoCentral.onload = () => {
-    ajustarCanvas(); // vuelve a dibujar la ruleta cuando el logo esté listo
+    ajustarCanvas(); 
   };
 }
 
@@ -151,15 +151,15 @@ function ajustarCanvas() {
   canvas.style.height = size + "px";
 
   // Escala el contexto para que todo se dibuje correctamente
-  ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
-  ctx.scale(ratio, ratio);           // Aplica escala
+  ctx.setTransform(1, 0, 0, 1, 0, 0); 
+  ctx.scale(ratio, ratio);           
 
   dibujarRuleta();
 }
 
 window.addEventListener("resize", ajustarCanvas);
 cargarImagenes(() => {
-  ajustarCanvas(); // ✅ Solo se llama cuando todas las imágenes están listas
+  ajustarCanvas(); 
 });
 
 // Función para obtener el índice ganador dado el ángulo total (en grados)
@@ -182,23 +182,23 @@ const sectorDeg = 360 / numSegmentos;
 let indiceGanador;
 
 if (giroContador === 3) {
-  // Primer giro → SIGUE GIRANDO (índice 5)
+  
   indiceGanador = 1;
 } else if (giroContador === 2) {
-  // Segundo giro → 5% DE DESCUENTO (índice 3)
+  
   indiceGanador = 3;
 } else if (giroContador === 1) {
-  // Tercer giro → SELLADORA (índice 0)
+  
   indiceGanador = 0;
 } else {
   indiceGanador = Math.floor(Math.random() * numSegmentos);
 }
 
 // Calcula el ángulo que posiciona el segmento en 270°
-const desplazamientoVisual = sectorDeg * -0.4; // ajusta entre 0.3 y 0.5 según lo que se vea mejor
+const desplazamientoVisual = sectorDeg * -0.4; 
 const destino = 270 - (indiceGanador * sectorDeg) + desplazamientoVisual;
 const anguloFinal = 360 * vueltas + destino;
-giroContador = Math.max(giroContador - 1, 0); // evita negativos
+giroContador = Math.max(giroContador - 1, 0); 
 
 
   const duracion = 4200;
@@ -211,7 +211,7 @@ function animar(tiempo) {
 
   ctx.save();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  dibujarRuleta(angulo); // ← ahora la rotación se maneja dentro de esta función
+  dibujarRuleta(angulo); 
   ctx.restore();
 
 if (progreso < 1) {
