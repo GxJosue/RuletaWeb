@@ -54,18 +54,38 @@
 let nombre = localStorage.getItem("nombreUsuario");
 
 async function solicitarNombre() {
-  nombre = prompt("Por favor, ingresa tu usuario asignado:");
-  if (!nombre || nombre.trim().length < 2) {
-    alert("Debes ingresar un nombre válido.");
-    await solicitarNombre(); // vuelve a pedir
-  } else {
-    localStorage.setItem("nombreUsuario", nombre);
-  }
+  return new Promise((resolve) => {
+    const modal = document.getElementById("modal");
+    const modalText = document.getElementById("modal-text");
+    const modalInput = document.getElementById("modal-input");
+    const modalConfirm = document.getElementById("modal-confirm");
+    const closeButton = document.querySelector(".close-button");
+
+    modalText.textContent = "Por favor, ingresa tu usuario asignado:";
+    modal.style.display = "flex";
+    modalInput.value = "";
+
+    function cerrarModal() {
+      modal.style.display = "none";
+    }
+
+    closeButton.onclick = cerrarModal;
+
+    modalConfirm.onclick = () => {
+      const valor = modalInput.value.trim();
+      if (valor.length < 2) {
+        modalText.textContent = "Debes ingresar un nombre válido.";
+        return;
+      }
+      localStorage.setItem("nombreUsuario", valor);
+      cerrarModal();
+      resolve(valor);
+    };
+  });
 }
 
 if (!nombre) {
-  await solicitarNombre();
-  nombre = localStorage.getItem("nombreUsuario");
+  nombre = await solicitarNombre();
 }
 
   const userRef = doc(db, "usuarios", nombre);
@@ -77,7 +97,7 @@ if (!nombre) {
       const userSnap = await getDoc(userRef);
 
       if (!userSnap.exists()) {
-        girosInfo.textContent = `Hola, ${nombre}. No estás registrado. Contacta al administrador.`;
+        girosInfo.textContent = `Hola, ${nombre}. No estás registrado.`;
         bloquearBoton();
         return;
         }
@@ -87,7 +107,7 @@ if (!nombre) {
         if (girosRestantes > 0) {
           girosInfo.textContent = `Hola, ${nombre}. Te quedan ${girosRestantes} giros.`;
         } else {
-          girosInfo.textContent = `Hola, ${nombre}. Ya no tienes giros disponibles 😢`;
+          girosInfo.textContent = `Ya no tienes giros disponibles 😢`;
           bloquearBoton();
         }
       }
@@ -144,5 +164,14 @@ if (!nombre) {
   await verificarUsuario();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<!-- Modal personalizado -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close-button">&times;</span>
+    <p id="modal-text"></p>
+    <input type="text" id="modal-input" placeholder="Ingresa tu usuario" />
+    <button id="modal-confirm">Confirmar</button>
+  </div>
+</div>
 </body>
 </html>
