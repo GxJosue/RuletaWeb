@@ -58,6 +58,25 @@ canvas {
   box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
 }
 
+#cambiar-usuario {
+  margin-top: 20px;
+  margin-bottom: 30px;
+  padding: 12px 25px;
+  background: linear-gradient(45deg, #ff7f50, #ffcc00);
+  border: none;
+  border-radius: 10px;
+  color: #000;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#cambiar-usuario:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+}
+
 /* --- Resultado --- */
 #resultado {
   margin-top: 15px;

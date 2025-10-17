@@ -16,12 +16,18 @@
     <button id="boton-girar">Girar</button>
     <div id="resultado" class="resultado-premio"></div>
     <div id="giros-restantes" class="giros-info"></div>
+    <button id="cambiar-usuario">Ingresar usuario</button>
   </div>
 
   <script src="script.js"></script>
 <script type="module">
   const girosInfo = document.getElementById("giros-restantes");
   const botonGirar = document.getElementById("boton-girar");
+  document.getElementById("cambiar-usuario").addEventListener("click", () => {
+  localStorage.removeItem("nombreUsuario");
+  location.reload();
+});
+  
 
   // === Importar Firebase (v12.4.0) ===
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
@@ -45,12 +51,22 @@
   const analytics = getAnalytics(app);
 
   // === Pedir o recuperar nombre del usuario ===
-  let nombre = localStorage.getItem("nombreUsuario");
-  if (!nombre) {
-    nombre = prompt("Por favor, ingresa tu nombre:");
-    if (!nombre) nombre = "Invitado";
+let nombre = localStorage.getItem("nombreUsuario");
+
+async function solicitarNombre() {
+  nombre = prompt("Por favor, ingresa tu usuario asignado:");
+  if (!nombre || nombre.trim().length < 2) {
+    alert("Debes ingresar un nombre válido.");
+    await solicitarNombre(); // vuelve a pedir
+  } else {
     localStorage.setItem("nombreUsuario", nombre);
   }
+}
+
+if (!nombre) {
+  await solicitarNombre();
+  nombre = localStorage.getItem("nombreUsuario");
+}
 
   const userRef = doc(db, "usuarios", nombre);
   let girosRestantes = 0;
@@ -61,10 +77,11 @@
       const userSnap = await getDoc(userRef);
 
       if (!userSnap.exists()) {
-        await setDoc(userRef, { nombre, giros_restantes: 3 });
-        girosRestantes = 3;
-        girosInfo.textContent = `¡Bienvenido, ${nombre}! Tienes ${girosRestantes} giros disponibles 🎉`;
-      } else {
+        girosInfo.textContent = `Hola, ${nombre}. No estás registrado. Contacta al administrador.`;
+        bloquearBoton();
+        return;
+        }
+       else {
         const data = userSnap.data();
         girosRestantes = data.giros_restantes;
         if (girosRestantes > 0) {
