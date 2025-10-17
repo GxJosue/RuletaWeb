@@ -4,13 +4,34 @@ const boton = document.getElementById("boton-girar");
 const resultado = document.getElementById("resultado");
 
 const premios = [
-  { nombre: "Premio 1", color: "#e63946" },
-  { nombre: "Premio 2", color: "#457b9d" },
-  { nombre: "Premio 3", color: "#f4a261" },
-  { nombre: "Premio 4", color: "#2a9d8f" },
-  { nombre: "Premio 5", color: "#264653" }
+  { nombre: "Premio 1", color: "#e63946", imagen: "img/premio1.png" },
+  { nombre: "Premio 2", color: "#457b9d", imagen: "img/premio2.jpeg" },
+  { nombre: "Premio 3", color: "#f4a261", imagen: "img/premio3.jpeg" },
+  { nombre: "Premio 4", color: "#2a9d8f", imagen: "img/premio4.png" },
+  { nombre: "Premio 5", color: "#264653", imagen: "img/premio5.jpeg" }
 ];
+const imagenes = premios.map(p => {
+  const img = new Image();
+  img.src = p.imagen;
+  return img;
+});
 
+function cargarImagenes(callback) {
+  let cargadas = 0;
+  const total = imagenes.length;
+
+  imagenes.forEach((img) => {
+    if (img.complete) {
+      cargadas++;
+      if (cargadas === total) callback();
+    } else {
+      img.onload = () => {
+        cargadas++;
+        if (cargadas === total) callback();
+      };
+    }
+  });
+}
 const numSegmentos = premios.length;
 const sectorRad = (2 * Math.PI) / numSegmentos;
 let girando = false;
@@ -51,14 +72,32 @@ if (i === resaltar) {
   ctx.shadowBlur = 0;
 
   // Texto o imagen
-  ctx.save();
-  ctx.translate(radio, radio);
-  ctx.rotate(angInicio + sectorRad / 2);
-  ctx.fillStyle = "#fff";
-  ctx.font = `${size * 0.04}px Poppins`;
-  ctx.textAlign = "center";
-  ctx.fillText(premios[i].nombre, radioAjustado * 0.6, 0);
-  ctx.restore();
+ctx.save();
+ctx.translate(radio, radio);
+ctx.rotate(angInicio + sectorRad / 2);
+
+// 🔹 Tamaño de imagen
+const imgSize = canvas.clientWidth * 0.08;
+
+// 🔹 Dibuja la imagen arriba
+const img = imagenes[i];
+if (img && img.complete) {
+  ctx.drawImage(
+    img,
+    radioAjustado * 0.6 - imgSize / 2, // centrado horizontal
+    -imgSize - 10,                    // posición vertical arriba
+    imgSize,
+    imgSize
+  );
+}
+
+// 🔹 Dibuja el texto debajo
+ctx.fillStyle = "#fff";
+ctx.font = `${size * 0.035}px Poppins`;
+ctx.textAlign = "center";
+ctx.fillText(premios[i].nombre, radioAjustado * 0.6, 10); // debajo de la imagen
+
+ctx.restore();
   
 }
 
@@ -94,7 +133,9 @@ function ajustarCanvas() {
 }
 
 window.addEventListener("resize", ajustarCanvas);
-ajustarCanvas();
+cargarImagenes(() => {
+  ajustarCanvas(); // ✅ Solo se llama cuando todas las imágenes están listas
+});
 
 // Función para obtener el índice ganador dado el ángulo total (en grados)
 function calcularIndiceGanador(anguloTotalDeg) {
