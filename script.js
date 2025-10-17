@@ -4,11 +4,12 @@ const boton = document.getElementById("boton-girar");
 const resultado = document.getElementById("resultado");
 
 const premios = [
-  { nombre: "Premio 1", color: "#e63946", imagen: "img/premio1.png" },
-  { nombre: "Premio 2", color: "#457b9d", imagen: "img/premio2.jpeg" },
-  { nombre: "Premio 3", color: "#f4a261", imagen: "img/premio3.jpeg" },
-  { nombre: "Premio 4", color: "#2a9d8f", imagen: "img/premio4.png" },
-  { nombre: "Premio 5", color: "#264653", imagen: "img/premio5.jpeg" }
+  { nombre: "REGALO SORPRESA", color: "#e63946", imagen: "img/gift.png" },
+  { nombre: "5% DE DESCUENTO", color: "#457b9d", imagen: "img/descuento.png" },
+  { nombre: "SMARTWATCH", color: "#f4a261", imagen: "img/smartwatch.png" },
+  { nombre: "15% DE DESCUENTO", color: "#2a9d8f", imagen: "img/descuento.png" },
+  { nombre: "SELLADORA", color: "#264653", imagen: "img/selladora.png" },
+  { nombre: "SIGUE GIRANDO", color: "#51cbfcff", imagen: "img/sigue-girando.png" }
 ];
 const imagenes = premios.map(p => {
   const img = new Image();
@@ -77,15 +78,21 @@ ctx.translate(radio, radio);
 ctx.rotate(angInicio + sectorRad / 2);
 
 // 🔹 Tamaño de imagen
-const imgSize = canvas.clientWidth * 0.08;
+let imgSize = canvas.clientWidth * 0.15;
+const nombrePremio = premios[i].nombre;
+
+// Aumenta el tamaño solo para smartwatch y selladora
+if (nombrePremio.includes("SMARTWATCH") || nombrePremio.includes("SELLADORA")) {
+  imgSize = canvas.clientWidth * 0.18; 
+}
 
 // 🔹 Dibuja la imagen arriba
 const img = imagenes[i];
 if (img && img.complete) {
   ctx.drawImage(
     img,
-    radioAjustado * 0.6 - imgSize / 2, // centrado horizontal
-    -imgSize - 10,                    // posición vertical arriba
+    radioAjustado * 0.6 -imgSize / 2 + 5, // centrado horizontal
+    -imgSize - 5,                    // posición vertical arriba
     imgSize,
     imgSize
   );
@@ -93,7 +100,7 @@ if (img && img.complete) {
 
 // 🔹 Dibuja el texto debajo
 ctx.fillStyle = "#fff";
-ctx.font = `${size * 0.035}px Poppins`;
+ctx.font = `${size * 0.030}px Orbitron`;
 ctx.textAlign = "center";
 ctx.fillText(premios[i].nombre, radioAjustado * 0.6, 10); // debajo de la imagen
 
@@ -101,15 +108,32 @@ ctx.restore();
   
 }
 
-
   ctx.beginPath();
   ctx.arc(radio, radio, radioAjustado, 0, 2 * Math.PI);
   ctx.strokeStyle = "#fff";
   ctx.lineWidth = 4;
   ctx.stroke();
 
+  if (logoCentral.complete) {
+  const logoSize = canvas.clientWidth * 0.35; // ajusta el tamaño según tu diseño
+  ctx.drawImage(
+    logoCentral,
+    radio - logoSize / 2,
+    radio - logoSize / 2,
+    logoSize,
+    logoSize
+  );
+} else {
+  logoCentral.onload = () => {
+    ajustarCanvas(); // vuelve a dibujar la ruleta cuando el logo esté listo
+  };
+}
+
   ctx.restore();
 }
+
+  const logoCentral = new Image();
+logoCentral.src = "img/logo.png"; 
 
 // Ajusta canvas al ancho del contenedor (responsivo)
 function ajustarCanvas() {
