@@ -2,14 +2,15 @@ const canvas = document.getElementById("ruleta");
 const ctx = canvas.getContext("2d");
 const boton = document.getElementById("boton-girar");
 const resultado = document.getElementById("resultado");
+let giroContador = 3;
 
 const premios = [
+  { nombre: "SELLADORA", color: "#264653", imagen: "img/selladora.png" },
+  { nombre: "SIGUE GIRANDO", color: "#51cbfcff", imagen: "img/sigue-girando.png" },
   { nombre: "REGALO SORPRESA", color: "#e63946", imagen: "img/gift.png" },
   { nombre: "5% DE DESCUENTO", color: "#457b9d", imagen: "img/descuento.png" },
   { nombre: "SMARTWATCH", color: "#f4a261", imagen: "img/smartwatch.png" },
-  { nombre: "15% DE DESCUENTO", color: "#2a9d8f", imagen: "img/descuento.png" },
-  { nombre: "SELLADORA", color: "#264653", imagen: "img/selladora.png" },
-  { nombre: "SIGUE GIRANDO", color: "#51cbfcff", imagen: "img/sigue-girando.png" }
+  { nombre: "15% DE DESCUENTO", color: "#51cbfcff", imagen: "img/descuento.png" }
 ];
 const imagenes = premios.map(p => {
   const img = new Image();
@@ -175,9 +176,31 @@ boton.addEventListener("click", () => {
   girando = true;
   resultado.textContent = "";
 
-  const vueltas = Math.floor(Math.random() * 3) + 5;
-  const destino = Math.random() * 360;
-  const anguloFinal = 360 * vueltas + destino;
+
+ const vueltas = Math.floor(Math.random() * 3) + 5;
+const sectorDeg = 360 / numSegmentos;
+let indiceGanador;
+
+if (giroContador === 3) {
+  // Primer giro → SIGUE GIRANDO (índice 5)
+  indiceGanador = 1;
+} else if (giroContador === 2) {
+  // Segundo giro → 5% DE DESCUENTO (índice 3)
+  indiceGanador = 3;
+} else if (giroContador === 1) {
+  // Tercer giro → SELLADORA (índice 0)
+  indiceGanador = 0;
+} else {
+  indiceGanador = Math.floor(Math.random() * numSegmentos);
+}
+
+// Calcula el ángulo que posiciona el segmento en 270°
+const desplazamientoVisual = sectorDeg * -0.4; // ajusta entre 0.3 y 0.5 según lo que se vea mejor
+const destino = 270 - (indiceGanador * sectorDeg) + desplazamientoVisual;
+const anguloFinal = 360 * vueltas + destino;
+giroContador = Math.max(giroContador - 1, 0); // evita negativos
+
+
   const duracion = 4200;
   const inicio = performance.now();
 
@@ -195,11 +218,9 @@ if (progreso < 1) {
   requestAnimationFrame(animar);
 } else {
   girando = false;
-  const anguloGanador = anguloFinal % 360;
-  const indice = calcularIndiceGanador(anguloGanador);
-
-  resultado.textContent = `Ganaste: ${premios[indice].nombre}`;
-  dibujarRuleta(anguloGanador, indice); // ← resalta el segmento ganador
+const anguloGanador = anguloFinal % 360;
+resultado.textContent = `Ganaste: ${premios[indiceGanador].nombre}`;
+dibujarRuleta(anguloGanador, indiceGanador);
   confetti({
     particleCount: 150,
     spread: 70,
