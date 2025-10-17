@@ -95,7 +95,7 @@ if (!nombre) {
       const userSnap = await getDoc(userRef);
 
       if (!userSnap.exists()) {
-        girosInfo.textContent = `Hola, ${nombre}. No estás registrado.`;
+        girosInfo.textContent = `No estás registrado o el usuario es incorrecto, intentalo nuevamente. ⬇️`;
         bloquearBoton();
         return;
         }
@@ -103,7 +103,7 @@ if (!nombre) {
         const data = userSnap.data();
         girosRestantes = data.giros_restantes;
         if (girosRestantes > 0) {
-          girosInfo.textContent = `Hola, ${nombre}. Te quedan ${girosRestantes} giros.`;
+          girosInfo.textContent = `Tienes ${girosRestantes} giros.`;
         } else {
           girosInfo.textContent = `Ya no tienes giros disponibles 😢`;
           bloquearBoton();
@@ -148,10 +148,10 @@ if (!nombre) {
     }
 
     if (girosRestantes === 0) {
-      girosInfo.textContent = "¡Has usado todos tus giros!";
+      girosInfo.textContent = "¡Has usado todos tus giros!😭";
       bloquearBoton();
     } else {
-      girosInfo.textContent = `Te quedan ${girosRestantes} giros.`;
+      girosInfo.textContent = `Te quedan ${girosRestantes} giros.😉`;
     }
   }
 
