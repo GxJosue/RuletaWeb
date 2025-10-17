@@ -59,7 +59,6 @@ async function solicitarNombre() {
     const modalText = document.getElementById("modal-text");
     const modalInput = document.getElementById("modal-input");
     const modalConfirm = document.getElementById("modal-confirm");
-    const closeButton = document.querySelector(".close-button");
 
     modalText.textContent = "Por favor, ingresa tu usuario asignado:";
     modal.style.display = "flex";
@@ -69,12 +68,11 @@ async function solicitarNombre() {
       modal.style.display = "none";
     }
 
-    closeButton.onclick = cerrarModal;
 
     modalConfirm.onclick = () => {
       const valor = modalInput.value.trim();
       if (valor.length < 2) {
-        modalText.textContent = "Debes ingresar un nombre válido.";
+        modalText.textContent = "Debes ingresar un usuario válido.";
         return;
       }
       localStorage.setItem("nombreUsuario", valor);
@@ -167,7 +165,6 @@ if (!nombre) {
 <!-- Modal personalizado -->
 <div id="modal" class="modal">
   <div class="modal-content">
-    <span class="close-button">&times;</span>
     <p id="modal-text"></p>
     <input type="text" id="modal-input" placeholder="Ingresa tu usuario" />
     <button id="modal-confirm">Confirmar</button>
