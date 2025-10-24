@@ -8,8 +8,8 @@ const premios = [
   { nombre: "SELLADORA", color: "#264653", imagen: "img/selladora.png" },
   { nombre: "SIGUE GIRANDO", color: "#51cbfcff", imagen: "img/sigue-girando.png" },
   { nombre: "REGALO SORPRESA", color: "#e63946", imagen: "img/gift.png" },
-  { nombre: "5% DE DESCUENTO", color: "#457b9d", imagen: "img/descuento.png" },
   { nombre: "SMARTWATCH", color: "#f4a261", imagen: "img/smartwatch.png" },
+  { nombre: "5% DE DESCUENTO", color: "#457b9d", imagen: "img/descuento.png" },
   { nombre: "15% DE DESCUENTO", color: "#51cbfcff", imagen: "img/descuento.png" }
 ];
 const imagenes = premios.map(p => {
